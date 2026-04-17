@@ -120,11 +120,12 @@
             const info = prompt("Informe seu crachá:");
             if (!info || !crachas.includes(info.trim())) return alert("Não autorizado.");
             const grupo = document.getElementById('filtroGrupo').value;
+            const agora = new Date().toLocaleString('pt-BR'); // CAPTURANDO A DATA AQUI
             const payload = { action: "updateAllocation", grupo: grupo, cracha: info.trim(), data: [] };
             document.querySelectorAll('.card').forEach((c, i) => {
                 const m = c.querySelector('.sel-modelo').value;
                 const t = c.querySelector('.sel-tamanho').value;
-                if(m && t) payload.data.push({ grupo: grupo, estacao: i + 1, modelo: m, tamanho: t, status: c.getAttribute('data-status') });
+                if(m && t) payload.data.push({ grupo: grupo, estacao: i + 1, modelo: m, tamanho: t, status: c.getAttribute('data-status'), dataHora: agora }); // INSERINDO dataHora NO PAYLOAD
             });
             try {
                 const btn = document.getElementById('btnSalvar'); btn.innerText = "⌛ Salvando..."; btn.disabled = true;
