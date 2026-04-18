@@ -13,6 +13,11 @@
         .btn-group { display: flex; gap: 10px; width: auto; }
         .btn { border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; gap: 8px; text-transform: uppercase; justify-content: center; align-items: center; }
         .btn-save { background-color: var(--primary-red); color: white; }
+        
+        /* NOVO ESTILO DO BOTÃO LIMPAR */
+        .btn-clear { background-color: #757575; color: white; }
+        .btn-clear:hover { background-color: #616161; }
+
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
         .card { background: white; border: 1px solid var(--border-color); border-radius: 4px; padding: 15px; }
         .input-box { margin-bottom: 10px; }
@@ -42,7 +47,7 @@
             .actions-container { width: 100%; justify-content: flex-start; }
             .filter-box { width: 100%; }
             .btn-group { width: 100%; }
-            .btn-save { flex-grow: 1; }
+            .btn-save, .btn-clear { flex-grow: 1; }
         }
     </style>
 </head>
@@ -68,6 +73,7 @@
                 </select>
             </div>
             <div class="btn-group">
+                <button id="btnLimpar" class="btn btn-clear" onclick="limparAlocacao()">🗑️ Limpar Alocação</button>
                 <button id="btnSalvar" class="btn btn-save" onclick="salvarAlocacao()">💾 Salvar Alocação</button>
             </div>
         </div>
@@ -87,7 +93,7 @@
     </div>
 
     <script>
-        const URL_API = "https://script.google.com/macros/s/AKfycbzQKH2Z5xyOUJASsupjo4kskJnYYGVm4i31vxq0UdAYp-P7VZmHYam0FYt-jfbiNJok/exec"; 
+        const URL_API = "https://script.google.com/macros/s/AKfycbw3CQXra_RWyZ_oaut_NP8AEhgz7ul5EKRXVLBHdOfbRoUIbc1toOHMOK5oF_Kdk8Wh/exec"; 
         
         const dataMap = { "VAZIO": ["VAZIO"], "004 SL BOR": ["39/40", "41", "42", "43/44"], "ADIZERO DRIVE RC SL BOR": ["11/12", "3X/4X", "5/6", "6X/7X", "8/9", "9X/10X"], "AIR MAX NUAXIS SL BOR": ["10", "11", "6", "7,5"], "AIR WINFLO 11 SL BOR": ["10", "11", "12", "4X", "5X", "6", "7", "7X", "8X", "9X"], "AIR WINFLO 12 SL BOR": ["10", "11", "12", "4", "4,5", "5,5", "6", "7", "7,5", "8,5", "9,5"], "BUMP 21 ID SL": ["34/35", "36", "40", "41", "42", "43"], "COURT VISION ALTA SL": ["5,5", "6", "7", "7,5", "8,5", "9"], "D0021 SL BOR": ["35", "36", "37", "38", "39", "40", "43"], "D0023 SL BOR": ["38", "42"], "D0088 SL BOR": ["34/35", "36", "37", "39/40", "41", "42", "47/48"], "DOWNSHIFTER 14 SL BOR": ["10", "11", "12", "4", "4,5", "5,5", "6", "7", "7,5", "8,5", "9,5"], "DOWNSHIFTER13 SL BOR": ["5X", "7X", "8X"], "FILA 2421 SL BOR": ["34/35", "38/39", "40", "41", "43", "44/45"], "FILA 2502 BICOLOR SL BOR": ["38/39", "40", "41", "42"], "FILA 2510 SL BOR": ["38/39", "42"], "FILA 2602 SL BOR": ["34/35", "38/39", "40", "41", "43"], "FLEX TRAIN SL BOR": ["10", "11", "12", "5,5", "6", "7", "7,5", "8,5", "9,5"], "GEL EQUATION SL BOR": ["10X", "12"], "GEL-BACKHAND CLAY 2": ["11X", "12", "5X", "7", "7X", "8X", "9", "9X"], "GEL-BACKHAND2 SL BOR": ["10X", "11X", "5X", "6", "7X", "8X"], "GEL-NAGOYA 4 SL BOR": ["10X", "11X", "4", "5", "5X", "6", "7", "8X", "9", "9X"], "GEL-NAGOYA 7 SL BOR": ["10X", "11X", "12", "5", "6", "7", "9"], "GEL-PULSE 15 SL BOR": ["6", "8X"], "GEL-QUANTUM 360 5": ["10X", "9"], "HANDBALL SPEZIAL SL BOR": ["4", "4,5", "6", "7", "9"], "HYPER DIAMOND ID SL BOR": ["37", "38", "39", "40", "41", "42", "43", "44"], "ID STABLE SL BOR": ["38/39", "40"], "ID VORTEX SL BOR": ["39", "40", "41", "42", "43"], "JR VAPOR 15 CL IC BICOLOR": ["1/1X", "3/3X", "4/4X", "5/5X"], "JR VAPOR 15 CL TF": ["4/4X"], "LEG 10 CLUB TF SL BO": ["10/10X", "11/11X", "12/12X", "6/6X", "7/7X", "8/8X", "9/9X"], "NB 413 SL BOR": ["34/36", "37/38", "39/40"], "NIKE QUEST 5 SL BOR": ["10", "11", "12", "7", "7X", "8X", "9X"], "NIKE SB CHECK SL BOR BICOLOR": ["10", "5,5", "7", "8,5", "9,5"], "PRIORITY SL BOR": ["10", "12", "4X", "5X", "6", "6X", "7X", "8", "8X", "9"], "PRIORITY SL BOR BICOLOR": ["4", "5X", "6", "7X", "8", "8X", "9", "9X"], "PRO 5 TRAINER SL BOR": ["35", "45"], "QUEST 6 BOR": ["4X", "5X", "6", "7", "7X"], "RUN DEFY SL BOR": ["10", "11", "12", "4", "4,5", "5,5", "6", "7", "7,5", "8,5", "9,5"], "RUN SWIFT 3 SL": ["12", "4X", "5X", "6", "7", "7X", "8X", "9X"], "SAMBA OG SL BOR": ["11,5", "4", "4,5", "5,5", "6", "6,5", "7", "8", "9"], "STREETTALK BIQ SL BOR": ["6,5/7", "8/9", "9X/10X"], "STREETTALK SL BOR": ["10,5", "11,5", "12", "4,5", "5,5", "6", "6,5", "7", "8", "9", "9,5"], "VAPOR 15 CL TF SL BO BICO": ["10/10X", "5/5X", "8/8X", "9/9X"] };
         
@@ -181,7 +187,6 @@
         
         async function salvarAlocacao() {
             const crachas = ["48192292175030"];
-            
             const info = await customPrompt("Para salvar a alocação do " + document.getElementById('filtroGrupo').value + ",\ninforme seu crachá:");
             
             if (!info || !crachas.includes(info.trim())) {
@@ -206,6 +211,31 @@
                 await customAlert('Erro ao tentar salvar.'); 
             } finally { 
                 document.getElementById('btnSalvar').innerText = "💾 Salvar Alocação"; document.getElementById('btnSalvar').disabled = false; 
+            }
+        }
+
+        async function limparAlocacao() {
+            const confirmar = await new Promise(resolve => {
+                const overlay = document.getElementById('customModalOverlay');
+                document.getElementById('customModalMessage').innerText = "Tem certeza que deseja limpar todas as seleções de modelos e tamanhos deste grupo?";
+                document.getElementById('customModalInput').style.display = 'none';
+                const btnCancel = document.getElementById('customModalBtnCancel');
+                const btnOk = document.getElementById('customModalBtnOk');
+                btnCancel.style.display = 'block';
+                btnOk.style.display = 'block';
+                btnOk.innerText = 'Sim, Limpar';
+                overlay.style.display = 'flex';
+                btnOk.onclick = () => { overlay.style.display = 'none'; resolve(true); };
+                btnCancel.onclick = () => { overlay.style.display = 'none'; resolve(false); };
+            });
+
+            if (confirmar) {
+                document.querySelectorAll('.card').forEach(card => {
+                    const selModelo = card.querySelector('.sel-modelo');
+                    const selTamanho = card.querySelector('.sel-tamanho');
+                    if (selModelo) selModelo.value = "";
+                    if (selTamanho) selTamanho.innerHTML = '<option value="">Selecionar</option>';
+                });
             }
         }
         
