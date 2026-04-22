@@ -91,13 +91,13 @@
     </div>
 
     <script>
+        // URL UNIFICADA PARA OS DOIS SISTEMAS
         const URL_API = "https://script.google.com/macros/s/AKfycbw3CQXra_RWyZ_oaut_NP8AEhgz7ul5EKRXVLBHdOfbRoUIbc1toOHMOK5oF_Kdk8Wh/exec"; 
         
         const usuariosAutorizados = {
             "48192292175030": "Administrador"
         };
 
-        // ==== NOVO DICIONÁRIO DE DADOS LIMPO E ATUALIZADO ====
         const dataMap = {
             "VAZIO": ["VAZIO"],
             "004 SL BOR": ["36", "38", "42", "43/44"],
@@ -155,7 +155,6 @@
             "VAPOR 15 CL TF SL BO": ["10/10X", "12/12X", "6/6X", "7/7X", "8/8X", "9/9X"],
             "VAPOR 15 CL TF SL BO BICO": ["5/5X", "8/8X", "9/9X"]
         };
-        // ======================================================
         
         function customAlert(msg) {
             return new Promise(resolve => {
@@ -211,7 +210,8 @@
             document.getElementById('msgCarregando').style.display = 'block';
             grid.style.opacity = '0.5';
             try {
-                const response = await fetch(`${URL_API}?grupo=${grupo}`);
+                // ADICIONADO CACHE-BUSTER AQUI PARA GITHUB PAGES (_t=...)
+                const response = await fetch(`${URL_API}?grupo=${grupo}&_t=${new Date().getTime()}`);
                 const dadosAtuais = await response.json();
                 grid.innerHTML = ''; 
                 for (let i = 1; i <= numEstacoes; i++) {
