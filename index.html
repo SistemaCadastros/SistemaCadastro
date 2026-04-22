@@ -96,13 +96,68 @@
         const URL_API = "https://script.google.com/macros/s/AKfycbw3CQXra_RWyZ_oaut_NP8AEhgz7ul5EKRXVLBHdOfbRoUIbc1toOHMOK5oF_Kdk8Wh/exec"; 
         
         // ==== DICIONÁRIO DE CRACHÁS E NOMES ====
-        // Adicione novos usuários aqui separando por vírgula. Ex: "1234": "João"
         const usuariosAutorizados = {
             "48192292175030": "Administrador"
         };
         // =======================================
 
-        const dataMap = { "VAZIO": ["VAZIO"],"LEG 10 CLUB IC SL BO": ["10/10X","11/11X","12/12X","4/4X","5/5X","6/6X","7/7X","8/8X","9/9X"], "004 SL BOR": ["39/40", "41", "42", "43/44"], "ADIZERO DRIVE RC SL BOR": ["11/12", "3X/4X", "5/6", "6X/7X", "8/9", "9X/10X"], "AIR MAX NUAXIS SL BOR": ["10", "11", "6", "7,5"], "AIR WINFLO 11 SL BOR": ["10", "11", "12", "4X", "5X", "6", "7", "7X", "8X", "9X"], "AIR WINFLO 12 SL BOR": ["10", "11", "12", "4", "4,5", "5,5", "6", "7", "7,5", "8,5", "9,5"], "BUMP 21 ID SL": ["34/35", "36", "40", "41", "42", "43"], "COURT VISION ALTA SL": ["5,5", "6", "7", "7,5", "8,5", "9"], "D0021 SL BOR": ["35", "36", "37", "38", "39", "40", "43"], "D0023 SL BOR": ["38", "42"], "D0088 SL BOR": ["34/35", "36", "37", "39/40", "41", "42", "47/48"], "DOWNSHIFTER 14 SL BOR": ["10", "11", "12", "4", "4,5", "5,5", "6", "7", "7,5", "8,5", "9,5"], "DOWNSHIFTER13 SL BOR": ["5X", "7X", "8X"], "FILA 2421 SL BOR": ["34/35", "38/39", "40", "41", "43", "44/45"], "FILA 2502 BICOLOR SL BOR": ["38/39", "40", "41", "42"], "FILA 2510 SL BOR": ["38/39", "42"], "FILA 2602 SL BOR": ["34/35", "38/39", "40", "41", "43"], "FLEX TRAIN SL BOR": ["10", "11", "12", "5,5", "6", "7", "7,5", "8,5", "9,5"], "GEL EQUATION SL BOR": ["10X", "12"], "GEL-BACKHAND CLAY 2": ["11X", "12", "5X", "7", "7X", "8X", "9", "9X"], "GEL-BACKHAND2 SL BOR": ["10X", "11X", "5X", "6", "7X", "8X"], "GEL-NAGOYA 4 SL BOR": ["10X", "11X", "4", "5", "5X", "6", "7", "8X", "9", "9X"], "GEL-NAGOYA 7 SL BOR": ["10X", "11X", "12", "5", "6", "7", "9"], "GEL-PULSE 15 SL BOR": ["6", "8X"], "GEL-QUANTUM 360 5": ["10X", "9"], "HANDBALL SPEZIAL SL BOR": ["4", "4,5", "6", "7", "9"], "HYPER DIAMOND ID SL BOR": ["37", "38", "39", "40", "41", "42", "43", "44"], "ID STABLE SL BOR": ["38/39", "40"], "ID VORTEX SL BOR": ["39", "40", "41", "42", "43"], "JR VAPOR 15 CL IC BICOLOR": ["1/1X", "3/3X", "4/4X", "5/5X"], "JR VAPOR 15 CL TF": ["4/4X"], "LEG 10 CLUB TF SL BO": ["10/10X", "11/11X", "12/12X", "6/6X", "7/7X", "8/8X", "9/9X"], "NB 413 SL BOR": ["34/36", "37/38", "39/40"], "NIKE QUEST 5 SL BOR": ["10", "11", "12", "7", "7X", "8X", "9X"], "NIKE SB CHECK SL BOR BICOLOR": ["10", "5,5", "7", "8,5", "9,5","12","7,5"], "PRIORITY SL BOR": ["10", "12", "4X", "5X", "6", "6X", "7X", "8", "8X", "9"], "PRIORITY SL BOR BICOLOR": ["4", "5X", "6", "7X", "8", "8X", "9", "9X"], "PRO 5 TRAINER SL BOR": ["35", "45"], "QUEST 6 BOR": ["4X", "5X", "6", "7", "7X"], "RUN DEFY SL BOR": ["10", "11", "12", "4", "4,5", "5,5", "6", "7", "7,5", "8,5", "9,5"], "RUN SWIFT 3 SL": ["12", "4X", "5X", "6", "7", "7X", "8X", "9X"], "SAMBA OG SL BOR": ["11,5", "4", "4,5", "5,5", "6", "6,5", "7", "8", "9"], "STREETTALK BIQ SL BOR": ["6,5/7", "8/9", "9X/10X"], "STREETTALK SL BOR": ["10,5", "11,5", "12", "4,5", "5,5", "6", "6,5", "7", "8", "9", "9,5"], "VAPOR 15 CL TF SL BO BICO": ["7","6","10/10X", "5/5X", "8/8X", "9/9X"],"VAPOR 15 CL IC SL BO BICO": ["7","6","10/10X", "5/5X", "8/8X", "9/9X"] };
+        const dataMap = {
+            "VAZIO": ["VAZIO"],
+            "004 SL BOR": ["36", "38", "42", "43/44"],
+            "ADIZERO DRIVE RC SL BOR": ["11/12", "3X/4X", "5/6", "6X/7X", "8/9", "9X/10X"],
+            "AIR MAX NUAXIS SL BOR": ["10", "6", "7", "7,5", "8,5", "9,5"],
+            "AIR WINFLO 11 SL BOR": ["10", "11", "4", "4X", "5X", "6", "7", "7X", "8X", "9X"],
+            "AIR WINFLO 12 SL BOR": ["10", "11", "12", "4", "4,5", "5,5", "6", "7", "7,5", "8,5", "9,5"],
+            "BUMP 21 ID SL": ["34/35", "40", "41", "42", "43"],
+            "BUMP 24 ID TIPO Z SL BOR": ["38/39", "42"],
+            "COURT VISION ALTA SL": ["5,5", "6", "7", "7,5", "8,5", "9"],
+            "D0021 SL BOR": ["35", "36", "37", "38", "39", "40", "43"],
+            "D0023 SL BOR": ["36", "37", "38", "39/40", "41", "42", "46"],
+            "D0088 SL BOR": ["34/35", "36", "37", "39/40", "41", "45", "46", "47/48"],
+            "DOWNSHIFTER 14 SL BOR": ["10", "11", "12", "4", "4,5", "5,5", "6", "7", "7,5", "8,5", "9,5"],
+            "DOWNSHIFTER13 SL BOR": ["4X", "5X", "6", "7X", "8X"],
+            "DYNABLAST 6 SL BOR": ["11X", "9", "9X"],
+            "FILA 2421 SL BOR": ["38/39", "40", "41", "43", "44/45"],
+            "FILA 2502 BICOLOR SL BOR": ["38/39", "40", "41", "42"],
+            "FILA 2510 SL BOR": ["38/39", "42"],
+            "FILA 2602 SL BOR": ["36", "38/39", "40", "41", "44/45"],
+            "FLEX TRAIN SL BOR": ["10", "11", "12", "5,5", "6", "7", "7,5", "8,5", "9,5"],
+            "GEL EQUATION SL BOR": ["10X", "11X"],
+            "GEL-BACKHAND CLAY 2": ["11X", "12", "5X", "7", "7X", "8X", "9", "9X"],
+            "GEL-BACKHAND2 SL BOR": ["10X", "11X", "6", "7X", "8X"],
+            "GEL-NAGOYA 4 SL BOR": ["10X", "11X", "4", "5", "5X", "6", "7", "8", "9", "9X"],
+            "GEL-NAGOYA 7 SL BOR": ["10X", "11X", "12", "5", "5X", "6", "7", "9"],
+            "GEL-PULSE 15 SL BOR": ["6", "8X"],
+            "GEL-QUANTUM 360 5": ["10X", "9"],
+            "HANDBALL SPEZIAL SL BOR": ["4", "4,5", "6", "7"],
+            "HG VORTEX SL BOR": ["38", "40", "43", "45"],
+            "HYPER DIAMOND ID SL BOR": ["37", "38", "39", "40", "41", "42", "43", "44"],
+            "ID STABLE SL BOR": ["38/39", "40", "41"],
+            "ID VORTEX INF SL BOR": ["33", "34", "36"],
+            "ID VORTEX SL BOR": ["39", "40", "41", "42", "43", "46"],
+            "JR VAPOR 15 CL IC BICOLOR": ["3/3X", "4/4X"],
+            "JR VAPOR 15 CL TF": ["2/2X", "4/4X", "5/5X"],
+            "LEG 10 CLUB IC SL BO": ["10/10X", "7/7X", "8/8X", "9/9X"],
+            "LEG 10 CLUB TF SL BO": ["10/10X", "11/11X", "12/12X", "6/6X", "7/7X", "8/8X", "9/9X"],
+            "NB 413 SL BOR": ["34/36", "37/38", "39/40"],
+            "NB471 SL BOR": ["38", "40"],
+            "NIKE QUEST 5 SL BOR": ["10", "11", "12", "6", "7", "7X", "8X", "9X"],
+            "NIKE SB CHECK SL BOR BICOLOR": ["10,00", "11,00", "5,50", "7,00", "8,50", "9,50"],
+            "OT PRO CLAY SL BOR": ["40,00"],
+            "PRIORITY SL BOR": ["10", "10X", "11", "4X", "6", "6X", "7X", "8", "8X", "9", "9X"],
+            "PRIORITY SL BOR BICOLOR": ["5X", "6", "7X", "8", "8X", "9", "9X"],
+            "PRO 5 TRAINER SL BOR": ["45"],
+            "QUEST 6 BOR": ["6", "7", "7X"],
+            "RUN DEFY SL BOR": ["10", "11", "12", "4", "4,5", "5,5", "6", "7", "7,5", "8,5", "9,5"],
+            "RUN SWIFT 3 SL": ["10", "11", "12", "4X", "6", "7", "7X", "8X", "9X"],
+            "SAMBA OG SL BOR": ["11,5", "4", "4,5", "5,5", "6", "6,5", "7", "8", "9"],
+            "SOLADO TNR SL BOR": ["30", "32", "35"],
+            "STREETTALK BIQ SL BOR": ["5,5/6", "6,5/7", "8/9", "9X/10X"],
+            "STREETTALK SL BOR": ["11,5", "4,5", "5,5", "6", "6,5", "7", "8", "9", "9,5"],
+            "UPTAKE 25 ID SL BOR": ["38/39"],
+            "VAPOR 15 CL TF SL BO": ["10/10X", "12/12X", "6/6X", "7/7X", "8/8X", "9/9X"],
+            "VAPOR 15 CL TF SL BO BICO": ["5/5X", "8/8X", "9/9X"]
+        };
         
         // FUNÇÕES DO MODAL CUSTOMIZADO
         function customAlert(msg) {
@@ -159,7 +214,8 @@
             document.getElementById('msgCarregando').style.display = 'block';
             grid.style.opacity = '0.5';
             try {
-                const response = await fetch(`${URL_API}?grupo=${grupo}`);
+                // ADDED CACHE-BUSTER HERE
+                const response = await fetch(`${URL_API}?grupo=${grupo}&_t=${new Date().getTime()}`);
                 const dadosAtuais = await response.json();
                 grid.innerHTML = ''; 
                 for (let i = 1; i <= numEstacoes; i++) {
@@ -218,9 +274,9 @@
                 localStorage.setItem('alocacaoGlobalSalva', JSON.stringify({
                     grupo: grupo,
                     cracha: crachaDigitado,
-                    nome: nomeUsuario, // Enviando o nome traduzido
+                    nome: nomeUsuario,
                     dataHora: agora,
-                    _t: Date.now() // Força a detecção imediata
+                    _t: Date.now() 
                 }));
                 // ==========================================================
 
