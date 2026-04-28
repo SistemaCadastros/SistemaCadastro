@@ -51,6 +51,32 @@
         .config-btn-action:hover { background: var(--primary-red); }
         #configMsg { height: 15px; font-size: 12px; font-weight: bold; text-align: center; margin-bottom: 15px; }
 
+        /* === Modal de Salvamento com Prensa de Sapato Clean === */
+        .saving-box { padding: 40px 30px !important; }
+        .factory-animation { position: relative; height: 90px; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; overflow: hidden; }
+        .shoe-press-svg { width: 90px; height: 90px; }
+        
+        .press-piston {
+            animation: press-down 1.6s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+        }
+        .press-sole {
+            transform-origin: 32px 52px; /* Base da sola para compressão natural */
+            animation: squish-sole 1.6s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+        }
+
+        @keyframes press-down {
+            0%, 15%, 100% { transform: translateY(0); }
+            45%, 65% { transform: translateY(17px); } /* Desce a prensa */
+        }
+        @keyframes squish-sole {
+            0%, 15%, 100% { transform: scaleY(1); }
+            45%, 65% { transform: scaleY(0.55); } /* Amassa a sola */
+        }
+        
+        .saving-progress-wrapper { width: 100%; background-color: #eee; border-radius: 8px; height: 8px; overflow: hidden; margin-bottom: 10px; }
+        .saving-progress-fill { width: 0%; height: 100%; background-color: var(--primary-red); transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s; box-shadow: 0 0 10px rgba(211, 47, 47, 0.4); }
+        .saving-progress-text { font-size: 14px; font-weight: 800; color: #555; }
+
         @media (max-width: 768px) {
             body { padding: 10px; }
             .sub-header { flex-direction: column; align-items: flex-start; }
@@ -105,6 +131,34 @@
                 <button id="customModalBtnCancel" class="btn-cancelar">Cancelar</button>
                 <button id="customModalBtnOk" class="btn-confirmar">OK</button>
             </div>
+        </div>
+    </div>
+
+    <div id="savingModalOverlay" class="custom-modal-overlay" style="z-index: 999999;">
+        <div class="custom-modal-box saving-box">
+            <div class="factory-animation">
+                <svg class="shoe-press-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 8 52 L 56 52 L 56 58 L 8 58 Z" fill="#444" />
+                    <path d="M 4 58 L 60 58 L 60 62 L 4 62 Z" fill="#222" />
+
+                    <g class="press-sole">
+                        <path d="M 16 52 C 24 54 40 54 48 52 C 52 48 48 44 40 44 C 30 44 24 46 16 46 C 12 48 12 50 16 52 Z" fill="var(--primary-red)" />
+                        <path d="M 18 49 L 46 49" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.4" />
+                    </g>
+
+                    <g class="press-piston">
+                        <rect x="28" y="-10" width="8" height="32" fill="#666" />
+                        <rect x="24" y="18" width="16" height="6" fill="#333" />
+                        <path d="M 12 24 L 52 24 L 52 30 L 12 30 Z" fill="#444" />
+                        <path d="M 14 30 L 50 30 L 50 32 L 14 32 Z" fill="#222" />
+                    </g>
+                </svg>
+            </div>
+            <h3 style="margin-bottom: 12px; font-size: 16px;">Sincronizando Matriz...</h3>
+            <div class="saving-progress-wrapper">
+                <div id="savingProgressBar" class="saving-progress-fill"></div>
+            </div>
+            <div id="savingProgressText" class="saving-progress-text">0%</div>
         </div>
     </div>
 
@@ -284,6 +338,19 @@
         }
         // ======================================
 
+        // SALVA RASCUNHO TEMPORÁRIO LOCALMENTE NO NAVEGADOR
+        function salvarRascunhoLocal() {
+            const grupo = document.getElementById('filtroGrupo').value;
+            const rascunho = {};
+            document.querySelectorAll('.card').forEach((c, index) => {
+                const i = index + 1;
+                const m = c.querySelector('.sel-modelo').value;
+                const t = c.querySelector('.sel-tamanho').value;
+                rascunho[i] = { modelo: m, tamanho: t };
+            });
+            localStorage.setItem('rascunho_' + grupo, JSON.stringify(rascunho));
+        }
+
         function customAlert(msg) {
             return new Promise(resolve => {
                 const overlay = document.getElementById('customModalOverlay');
@@ -343,18 +410,35 @@
             try {
                 const response = await fetch(`${URL_API}?grupo=${grupo}&_t=${new Date().getTime()}`, { cache: "no-store" });
                 const dadosAtuais = await response.json();
+                
+                // Busca se há um rascunho local em andamento para este grupo
+                const rascunhoLocal = JSON.parse(localStorage.getItem('rascunho_' + grupo)) || {};
+
                 grid.innerHTML = ''; 
                 for (let i = 1; i <= numEstacoes; i++) {
                     const salvo = dadosAtuais.find(d => String(d.estacao) === String(i));
+                    
+                    let modValue = salvo ? salvo.modelo : "";
+                    let tamValue = salvo ? salvo.tamanho : "";
+
+                    // Se existe um rascunho local (mesmo que vazio intencionalmente), sobrepõe
+                    if (rascunhoLocal[i] !== undefined) {
+                        modValue = rascunhoLocal[i].modelo;
+                        tamValue = rascunhoLocal[i].tamanho;
+                    }
+
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.setAttribute('data-status', salvo ? salvo.status : "parada");
                     card.innerHTML = `
                         <div class="card-header"><b>ESTAÇÃO ${i}</b></div>
-                        <div class="input-box"><label>MODELO</label><select class="sel-modelo" onchange="updateSizes(this)"><option value="">Selecionar</option>${modelNames.map(m => `<option value="${m}" ${salvo && m === salvo.modelo ? 'selected' : ''}>${m}</option>`).join('')}</select></div>
-                        <div class="input-box"><label>TAMANHO</label><select class="sel-tamanho"><option value="">Escolha o modelo</option></select></div>`;
+                        <div class="input-box"><label>MODELO</label><select class="sel-modelo" onchange="updateSizes(this); salvarRascunhoLocal();"><option value="">Selecionar</option>${modelNames.map(m => `<option value="${m}" ${m === modValue ? 'selected' : ''}>${m}</option>`).join('')}</select></div>
+                        <div class="input-box"><label>TAMANHO</label><select class="sel-tamanho" onchange="salvarRascunhoLocal()"><option value="">Escolha o modelo</option></select></div>`;
                     grid.appendChild(card);
-                    if (salvo && salvo.modelo) popularTamanhos(card.querySelector('.sel-tamanho'), salvo.modelo, salvo.tamanho);
+                    
+                    if (modValue) {
+                        popularTamanhos(card.querySelector('.sel-tamanho'), modValue, tamValue);
+                    }
                 }
             } catch (e) {} finally { document.getElementById('msgCarregando').style.display = 'none'; grid.style.opacity = '1'; }
         }
@@ -392,9 +476,44 @@
                 const t = c.querySelector('.sel-tamanho').value;
                 if(m && t) payload.data.push({ grupo: grupo, estacao: i + 1, modelo: m, tamanho: t, status: c.getAttribute('data-status'), dataHora: agora }); 
             });
+
+            // Configuração do Popup de Progresso
+            const pOverlay = document.getElementById('savingModalOverlay');
+            const pBar = document.getElementById('savingProgressBar');
+            const pText = document.getElementById('savingProgressText');
+            
             try {
-                const btn = document.getElementById('btnSalvar'); btn.innerText = "⌛ Salvando..."; btn.disabled = true;
+                const btn = document.getElementById('btnSalvar'); 
+                btn.innerText = "⌛ Salvando..."; 
+                btn.disabled = true;
+
+                // Mostra o Modal de Animação e reseta para 0
+                pOverlay.style.display = 'flex';
+                pBar.style.width = '0%';
+                pBar.style.backgroundColor = 'var(--primary-red)';
+                pText.innerText = '0%';
+                
+                // Simulador de progresso enquanto aguarda a API
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    if (progress < 90) {
+                        progress += Math.random() * 8 + 3;
+                        if(progress > 90) progress = 90;
+                        pBar.style.width = progress + '%';
+                        pText.innerText = Math.floor(progress) + '%';
+                    }
+                }, 250);
+
+                // Executa a chamada real para a base de dados
                 await fetch(URL_API, { method: 'POST', body: JSON.stringify(payload) });
+
+                // Quando a requisição finaliza com sucesso, pular direto pra 100%
+                clearInterval(progressInterval);
+                pBar.style.width = '100%';
+                pText.innerText = '100%';
+                
+                // Pequena pausa para a animação visual atingir o final com suavidade
+                await new Promise(r => setTimeout(r, 400)); 
                 
                 localStorage.setItem('alocacaoGlobalSalva', JSON.stringify({
                     grupo: grupo,
@@ -403,13 +522,26 @@
                     dataHora: agora,
                     _t: Date.now()
                 }));
+                
+                // Após salvar na base, o rascunho é limpo
+                localStorage.removeItem('rascunho_' + grupo);
 
+                pOverlay.style.display = 'none';
                 await customAlert(`Salvo com sucesso, ${nomeUsuario}!`); 
                 renderizarEstacoes();
+                
             } catch (e) { 
+                // Se der erro, a barra fica laranja momentaneamente
+                pBar.style.backgroundColor = '#ff9800';
+                pText.innerText = 'Erro na conexão!';
+                await new Promise(r => setTimeout(r, 1000));
+                pOverlay.style.display = 'none';
                 await customAlert('Erro ao tentar salvar.'); 
             } finally { 
-                document.getElementById('btnSalvar').innerText = "💾 Salvar Alocação"; document.getElementById('btnSalvar').disabled = false; 
+                // Fallback para esconder e resetar tudo
+                pOverlay.style.display = 'none';
+                document.getElementById('btnSalvar').innerText = "💾 Salvar Alocação"; 
+                document.getElementById('btnSalvar').disabled = false; 
             }
         }
 
@@ -429,6 +561,10 @@
             });
 
             if (confirmar) {
+                const grupo = document.getElementById('filtroGrupo').value;
+                // Apaga também os rascunhos que pudessem estar salvos para este grupo
+                localStorage.removeItem('rascunho_' + grupo);
+                
                 document.querySelectorAll('.card').forEach(card => {
                     const selModelo = card.querySelector('.sel-modelo');
                     const selTamanho = card.querySelector('.sel-tamanho');
